@@ -106,7 +106,7 @@ public class ACChannel {
 
     private func setupAutoSubscribe() {
         if options.autoSubscribe {
-            if client?.isConnected ?? false { try? subscribe() }
+            if client?.isConnected ?? false { try? subscribe(params: subscriptionParams) }
             client?.addOnConnected { [weak self] (headers) in
                 guard let self = self else { return }
                 try? self.subscribe(params: self.subscriptionParams)
