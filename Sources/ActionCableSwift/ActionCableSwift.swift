@@ -88,8 +88,8 @@ public final class ACClient {
     }
 
     @discardableResult
-    public func makeChannel(name: String, options: ACChannelOptions? = nil) -> ACChannel {
-        channels[name] = ACChannel(channelName: name, client: self, options: options)
+    public func makeChannel(name: String, subscriptionParams: [String: Any] = [:], options: ACChannelOptions? = nil) -> ACChannel {
+        channels[name] = ACChannel(channelName: name, client: self, subscriptionParams: subscriptionParams, options: options)
         return channels[name]!
     }
 
