@@ -21,7 +21,6 @@ public class ACChannel {
     public var bufferingIfDisconnected = false
     public var subscriptionParams: [String: Any]
 
-    private let channelConcurrentQueue = DispatchQueue(label: "com.ACChannel.Conccurent", attributes: .concurrent)
     private let channelSerialQueue = DispatchQueue(label: "com.ACChannel.SerialQueue")
 
     /// callbacks
@@ -166,29 +165,25 @@ public class ACChannel {
     }
 
     private func executeCallback(callbacks: [ACResponseCallback], message: ACMessage) {
-        channelConcurrentQueue.async { [weak self] in
+        channelSerialQueue.async { [weak self] in
             guard let self = self else { return }
             for closure in callbacks {
-                self.channelConcurrentQueue.async {
-                    closure(self, message)
-                }
+                closure(self, message)
             }
         }
     }
 
     private func executeCallback(callbacks: [ACResponseCallbackWithOptionalMessage]) {
-        channelConcurrentQueue.async { [weak self] in
+        channelSerialQueue.async { [weak self] in
             guard let self = self else { return }
             for closure in callbacks {
-                self.channelConcurrentQueue.async {
-                    closure(self, nil)
-                }
+                closure(self, nil)
             }
         }
     }
 
     private func flushBuffer() {
-        channelConcurrentQueue.async { [weak self] in
+        channelSerialQueue.async { [weak self] in
             guard let self = self else { return }
             while let closure = self.actionsBuffer.popLast() {
                 closure()

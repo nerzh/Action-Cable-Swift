@@ -97,22 +97,18 @@ public final class ACClient {
         ws.onConnected = { [weak self] headers in
             guard let self = self else { return }
             self.isConnected = true
-            self.clientConcurrentQueue.async {
+            self.clientConcurrentQueue.async { [headers] in
                 for closure in self.onConnected {
-                    self.clientConcurrentQueue.async {
-                        closure(headers)
-                    }
+                    closure(headers)
                 }
             }
         }
         ws.onDisconnected = { [weak self] reason in
             guard let self = self else { return }
             self.isConnected = false
-            self.clientConcurrentQueue.async {
+            self.clientConcurrentQueue.async { [reason] in
                 for closure in self.onDisconnected {
-                    self.clientConcurrentQueue.async {
-                        closure(reason)
-                    }
+                    closure(reason)
                 }
             }
         }
@@ -121,29 +117,23 @@ public final class ACClient {
             self.isConnected = false
             self.clientConcurrentQueue.async {
                 for closure in self.onCancelled {
-                    self.clientConcurrentQueue.async {
-                        closure()
-                    }
+                    closure()
                 }
             }
         }
         ws.onText = { [weak self] text in
             guard let self = self else { return }
-            self.clientConcurrentQueue.async {
+            self.clientConcurrentQueue.async { [text] in
                 for closure in self.onText {
-                    self.clientConcurrentQueue.async {
-                        closure(text)
-                    }
+                    closure(text)
                 }
             }
         }
         ws.onBinary = { [weak self] data in
             guard let self = self else { return }
-            self.clientConcurrentQueue.async {
+            self.clientConcurrentQueue.async { [data] in
                 for closure in self.onBinary {
-                    self.clientConcurrentQueue.async {
-                        closure(data)
-                    }
+                    closure(data)
                 }
             }
         }
@@ -151,9 +141,7 @@ public final class ACClient {
             guard let self = self else { return }
             self.clientConcurrentQueue.async {
                 for closure in self.onPing {
-                    self.clientConcurrentQueue.async {
-                        closure()
-                    }
+                    closure()
                 }
             }
         }
@@ -161,9 +149,7 @@ public final class ACClient {
             guard let self = self else { return }
             self.clientConcurrentQueue.async {
                 for closure in self.onPong {
-                    self.clientConcurrentQueue.async {
-                        closure()
-                    }
+                    closure()
                 }
             }
         }
