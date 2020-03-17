@@ -30,7 +30,7 @@ and you can import ActionCableSwift
 
 ### You will need to implement the `ACWebSocketProtocol` protocol. 
 
-### If you use "Starscream", you can take this code or to write your own web socket client:
+### If you use "Starscream", you can to copy this code or to write own web socket client:
 
 ```swift
 import Foundation
@@ -102,6 +102,8 @@ class WSS: ACWebSocketProtocol, WebSocketDelegate {
 }
 
 ```
+
+### and use ActionCableSwift
 
 
 ```swift
