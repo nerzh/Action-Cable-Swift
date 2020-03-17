@@ -118,4 +118,22 @@ public struct ACMessage {
     }
 }
 
+class PingRound {
 
+    var lastTimePoint: Int = 0
+    var cheksRange: Int = 6
+    weak var client: ACClient?
+    private let lock = NSLock()
+
+    init(client: ACClient) {
+        self.client = client
+    }
+
+    func start() {
+
+    }
+
+    private func increment() {
+
+    }
+}

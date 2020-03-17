@@ -66,7 +66,7 @@ public class ACChannel {
         self.client = client
         self.options = options ?? ACChannelOptions()
         setupAutoSubscribe()
-        setupOntextCallbacks()
+        setupOnTextCallbacks()
     }
 
     public func subscribe(params: [String: Any] = [:]) throws {
@@ -115,7 +115,21 @@ public class ACChannel {
         }
     }
 
-    private func setupOntextCallbacks() {
+    private func setupOnDisconnectCallbacks() {
+        client?.addOnDisconnected { [weak self] (reason) in
+            guard let self = self else { return }
+            self.isSubscribed = false
+        }
+    }
+
+    private func setupOnCancelledCallbacks() {
+        client?.addOnCancelled { [weak self] in
+            guard let self = self else { return }
+            self.isSubscribed = false
+        }
+    }
+
+    private func setupOnTextCallbacks() {
         client?.addOnText { [weak self] (text) in
             guard let self = self else { return }
             let message = ACSerializer.responseFrom(stringData: text)
