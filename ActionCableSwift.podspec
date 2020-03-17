@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name          = 'ActionCableSwift'
   s.module_name   = 'ActionCableSwift'
-  s.version       = '0.1.1'
+  s.version       = '0.1.2'
   s.summary       = '🏰 Action Cable Swift is a client library being released for Action Cable Rails 5 which makes it easy to add real-time features to your app.'
 
   s.swift_version = '5.1'
@@ -28,8 +28,8 @@ Pod::Spec.new do |s|
   s.author           = { 'Oleh Hudeichuk' => 'emptystamp@gmail.com' }
   s.source           = { :git => 'https://github.com/nerzh/Action-Cable-Swift.git', :tag => s.version.to_s }
   s.social_media_url = 'https://www.linkedin.com/in/oleh-gudeychuk-428389ab'
-
-  s.ios.deployment_target = '9.0'
-
+  s.ios.deployment_target = '10.0'
   s.source_files = 'Sources/**/*'
+  s.frameworks = 'Foundation'
+  s.dependency 'SwiftExtensionsPack', '~> 0.2.9'
 end
