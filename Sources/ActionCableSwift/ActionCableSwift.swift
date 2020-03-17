@@ -5,8 +5,9 @@ public final class ACClient {
 
     public var ws: ACWebSocketProtocol
     public var isConnected: Bool = false
-    public let headers: [String: String]?
-    public let options: ACClientOptions
+    public var headers: [String: String]?
+    public var options: ACClientOptions
+    
     private var channels: [String: ACChannel] = [:]
     private let clientConcurrentQueue = DispatchQueue(label: "com.ACClient.Conccurent", attributes: .concurrent)
 
@@ -92,7 +93,7 @@ public final class ACClient {
             guard let self = self else { return }
             self.isConnected = true
             self.clientConcurrentQueue.async {
-                while let closure = self.onConnected.popLast() {
+                for closure in self.onConnected {
                     self.clientConcurrentQueue.async {
                         closure(headers)
                     }
@@ -103,7 +104,7 @@ public final class ACClient {
             guard let self = self else { return }
             self.isConnected = false
             self.clientConcurrentQueue.async {
-                while let closure = self.onDisconnected.popLast() {
+                for closure in self.onDisconnected {
                     self.clientConcurrentQueue.async {
                         closure(reason)
                     }
@@ -114,7 +115,7 @@ public final class ACClient {
             guard let self = self else { return }
             self.isConnected = false
             self.clientConcurrentQueue.async {
-                while let closure = self.onCancelled.popLast() {
+                for closure in self.onCancelled {
                     self.clientConcurrentQueue.async {
                         closure()
                     }
@@ -124,7 +125,7 @@ public final class ACClient {
         ws.onText = { [weak self] text in
             guard let self = self else { return }
             self.clientConcurrentQueue.async {
-                while let closure = self.onText.popLast() {
+                for closure in self.onText {
                     self.clientConcurrentQueue.async {
                         closure(text)
                     }
@@ -134,7 +135,7 @@ public final class ACClient {
         ws.onBinary = { [weak self] data in
             guard let self = self else { return }
             self.clientConcurrentQueue.async {
-                while let closure = self.onBinary.popLast() {
+                for closure in self.onBinary {
                     self.clientConcurrentQueue.async {
                         closure(data)
                     }
@@ -144,7 +145,7 @@ public final class ACClient {
         ws.onPing = { [weak self] in
             guard let self = self else { return }
             self.clientConcurrentQueue.async {
-                while let closure = self.onPing.popLast() {
+                for closure in self.onPing {
                     self.clientConcurrentQueue.async {
                         closure()
                     }
@@ -154,7 +155,7 @@ public final class ACClient {
         ws.onPong = { [weak self] in
             guard let self = self else { return }
             self.clientConcurrentQueue.async {
-                while let closure = self.onPong.popLast() {
+                for closure in self.onPong {
                     self.clientConcurrentQueue.async {
                         closure()
                     }

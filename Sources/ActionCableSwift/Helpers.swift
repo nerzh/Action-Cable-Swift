@@ -31,6 +31,8 @@ public struct ACChannelOptions {
     public var buffering = false
     public var autoSubscribe = false
 
+    public init() {}
+
     public init(buffering: Bool, autoSubscribe: Bool) {
         self.buffering = buffering
         self.autoSubscribe = autoSubscribe

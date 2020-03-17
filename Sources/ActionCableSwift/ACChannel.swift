@@ -19,15 +19,17 @@ public class ACChannel {
     weak var client: ACClient?
     public var isSubscribed = false
     public var bufferingIfDisconnected = false
+    public var subscriptionParams: [String: Any]
 
     private let channelConcurrentQueue = DispatchQueue(label: "com.ACChannel.Conccurent", attributes: .concurrent)
     private let channelSerialQueue = DispatchQueue(label: "com.ACChannel.SerialQueue")
 
     /// callbacks
-        var onMessage: [ACResponseCallback] = []
+    private var onMessage: [ACResponseCallback] = []
     private var onSubscribe: [ACResponseCallbackWithOptionalMessage] = []
     private var onUnsubscribe: [ACResponseCallbackWithOptionalMessage] = []
     private var onRejectSubscription: [ACResponseCallbackWithOptionalMessage] = []
+    private var onPing: [ACResponseCallbackWithOptionalMessage] = []
     private var actionsBuffer: [ACAction] = []
 
     public func addOnMessage(_ handler: @escaping ACResponseCallback) {
@@ -46,20 +48,29 @@ public class ACChannel {
         onRejectSubscription.append(handler)
     }
 
-    public func addAction(_ action: @escaping ACAction) {
+    public func addOnPing(_ handler: @escaping ACResponseCallbackWithOptionalMessage) {
+        onPing.append(handler)
+    }
+
+    private func addAction(_ action: @escaping ACAction) {
         actionsBuffer.insert(action, at: 0)
     }
 
-    public init(channelName: String, client: ACClient, options: ACChannelOptions? = nil) {
+    public init(channelName: String,
+                client: ACClient,
+                subscriptionParams: [String: Any] = [:],
+                options: ACChannelOptions? = nil
+    ) {
         self.channelName = channelName
+        self.subscriptionParams = subscriptionParams
         self.client = client
         self.options = options ?? ACChannelOptions()
         setupAutoSubscribe()
         setupOntextCallbacks()
     }
 
-    public func subscribe() throws {
-        let data: Data = try ACSerializer.requestFrom(command: .subscribe, channelName: channelName)
+    public func subscribe(params: [String: Any] = [:]) throws {
+        let data: Data = try ACSerializer.requestFrom(command: .subscribe, channelName: channelName, identifier: params)
         client?.send(data: data)
     }
 
@@ -99,7 +110,7 @@ public class ACChannel {
             if client?.isConnected ?? false { try? subscribe() }
             client?.addOnConnected { [weak self] (headers) in
                 guard let self = self else { return }
-                try? self.subscribe()
+                try? self.subscribe(params: self.subscriptionParams)
             }
         }
     }
@@ -112,6 +123,7 @@ public class ACChannel {
             case .confirmSubscription:
                 self.isSubscribed = true
                 self.executeCallback(callbacks: self.onSubscribe, message: message)
+                self.flushBuffer()
             case .rejectSubscription:
                 self.isSubscribed = false
                 self.executeCallback(callbacks: self.onRejectSubscription, message: message)
@@ -120,6 +132,8 @@ public class ACChannel {
                 self.executeCallback(callbacks: self.onUnsubscribe, message: message)
             case .message:
                 self.executeCallback(callbacks: self.onMessage, message: message)
+            case .ping:
+                self.executeCallback(callbacks: self.onPing)
             default: break
             }
         }

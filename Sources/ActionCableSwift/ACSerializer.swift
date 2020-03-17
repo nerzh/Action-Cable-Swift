@@ -56,9 +56,7 @@ public class ACSerializer {
             if let identifier = dict["identifier"] as? String {
                 message.identifier = try? identifier.toDictionary()
             }
-            if let mess = dict["message"] as? [String: Any] {
-                message.message = mess
-            }
+            message.message = dict["message"] as? [String: Any]
             return message
         }
     }
