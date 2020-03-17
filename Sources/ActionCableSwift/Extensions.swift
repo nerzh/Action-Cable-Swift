@@ -7,19 +7,6 @@
 
 import Foundation
 
-extension Dictionary {
-
-    func toJSON(options: JSONSerialization.WritingOptions = []) throws -> String {
-        let data = try JSONSerialization.data(withJSONObject: self, options: options)
-        guard let string = String(data: data, encoding: .utf8) else { throw ACError.badDictionary }
-        return string
-    }
-
-    func toJSONData(options: JSONSerialization.WritingOptions = []) throws -> Data {
-        try JSONSerialization.data(withJSONObject: self, options: options)
-    }
-}
-
 extension String {
 
     func toDictionary() throws -> [String: Any] {

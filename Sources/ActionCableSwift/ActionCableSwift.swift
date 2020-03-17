@@ -6,6 +6,7 @@ public final class ACClient {
     public var ws: ACWebSocketProtocol
     public var isConnected: Bool = false
     public var headers: [String: String]?
+    public let pingRoundWatcher = PingRoundWatcher()
     public var options: ACClientOptions
     
     private var channels: [String: ACChannel] = [:]
@@ -64,6 +65,10 @@ public final class ACClient {
 
     public func connect() {
         ws.connect(headers: headers)
+        if self.options.reconnect {
+            self.pingRoundWatcher.client = self
+            self.pingRoundWatcher.start()
+        }
     }
 
     public func disconnect() {

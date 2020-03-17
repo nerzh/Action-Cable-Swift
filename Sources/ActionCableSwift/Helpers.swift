@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftExtensionsPack
 
 public enum ACSchema: String {
     case ws
@@ -19,10 +20,13 @@ public struct ACClientOptions {
     public var debug = false
     #endif
 
+    public var reconnect: Bool = true
+
     public init() {}
 
-    public init(debug: Bool) {
+    public init(debug: Bool, reconnect: Bool) {
         self.debug = debug
+        self.reconnect = reconnect
     }
 }
 
@@ -118,22 +122,93 @@ public struct ACMessage {
     }
 }
 
-class PingRound {
+public final class PingRoundWatcher {
 
-    var lastTimePoint: Int = 0
-    var cheksRange: Int = 6
+    var lastTimePoint: Int64 = 0
+    var pingInterval: UInt32 = 3
+    var cheksRange: Int64 = 9
+    var difference: Int64 = 0
     weak var client: ACClient?
+    private var started = false
     private let lock = NSLock()
 
-    init(client: ACClient) {
+    init(client: ACClient? = nil) {
         self.client = client
     }
 
     func start() {
+        if isStarted() { return }
+        updateLastPoint()
 
+        Thread { [weak self] in
+            guard let self = self else { return }
+            self.setStarted(to: true)
+            while true {
+                sleep(self.pingInterval)
+                if self.client?.isConnected ?? false {
+                    self.updateLastPoint()
+                } else if !self.checkDifference() {
+                    self.updateLastPoint()
+                    self.client?.isConnected = false
+                    self.client?.disconnect()
+                    self.client?.connect()
+                }
+            }
+        }.start()
     }
 
-    private func increment() {
+    public func getDifference() -> Int64 {
+        setDifference()
+        lock.lock()
+        let diff = Date().toSeconds() - lastTimePoint
+        lock.unlock()
 
+        return diff
+    }
+
+    public func isStarted() -> Bool {
+        lock.lock()
+        let result = started
+        lock.unlock()
+
+        return result
+    }
+
+    public func setStarted(to: Bool) {
+        lock.lock()
+        started = to
+        lock.unlock()
+    }
+
+
+    private func checkDifference() -> Bool {
+        return getDifference() <= cheksRange
+    }
+
+    private func setDifference() {
+        lock.lock()
+        difference = Date().toSeconds() - lastTimePoint
+        lock.unlock()
+    }
+
+    private func updateLastPoint() {
+        lock.lock()
+        lastTimePoint = Date().toSeconds()
+        lock.unlock()
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
