@@ -1,5 +1,6 @@
 # ActionCableSwift
 [![SPM](https://img.shields.io/badge/swift-package%20manager-green)](https://swift.org/package-manager/)
+[![Action Cable Swift Cocoa Pods](https://img.shields.io/badge/cocoa-pods-orange)](https://cocoapods.org/pods/ActionCableSwift)
 
 [Action Cable Swift](https://github.com/nerzh/Action-Cable-Swift)  is a client library being released for Action Cable Rails 5 which makes it easy to add real-time features to your app. This Swift client inspired by "Swift-ActionCableClient", but it not support now and I created Action-Cable-Swift. 
 
@@ -19,6 +20,14 @@ Add the following line to your `Package.swift`
     // ...
     dependencies: ["ActionCableSwift"]
     // ...
+```
+
+#### Cocoa Pods
+
+Add the following line to your `Podfile`
+
+```ruby
+    pod 'ActionCableSwift'
 ```
 
 and you can import ActionCableSwift
