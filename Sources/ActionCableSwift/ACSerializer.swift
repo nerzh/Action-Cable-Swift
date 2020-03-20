@@ -11,13 +11,11 @@ import SwiftExtensionsPack
 public class ACSerializer {
 
     public class func requestFrom(command: ACCommand,
-                           channelName: String,
-                           action: String? = nil,
-                           identifier: [String: Any] = [:],
-                           data: [String: Any] = [:]
+                                  action: String? = nil,
+                                  identifier: [String: Any],
+                                  data: [String: Any]
     ) throws -> String {
         try makeRequestDictionary(command: command,
-                                  channelName: channelName,
                                   action: action,
                                   identifier: identifier,
                                   data: data
@@ -25,13 +23,11 @@ public class ACSerializer {
     }
 
     public class func requestFrom(command: ACCommand,
-                           channelName: String,
-                           action: String? = nil,
-                           identifier: [String: Any] = [:],
-                           data: [String: Any] = [:]
+                                  action: String? = nil,
+                                  identifier: [String: Any],
+                                  data: [String: Any]
     ) throws -> Data {
         try makeRequestDictionary(command: command,
-                                  channelName: channelName,
                                   action: action,
                                   identifier: identifier,
                                   data: data
@@ -74,29 +70,25 @@ public class ACSerializer {
     }
 
     private class func makeRequestDictionary(command: ACCommand,
-                                             channelName: String,
                                              action: String? = nil,
-                                             identifier: [String: Any] = [:],
-                                             data: [String: Any] = [:]
+                                             identifier: [String: Any],
+                                             data: [String: Any]
     ) throws -> [String: Any] {
         switch command {
         case .message:
             guard let action = action else { throw ACError.badAction }
-            let identifier: [String : Any] = ["channel": channelName]
             var data: [String : Any] = data
             data["action"] = action
             let payload: [String : Any] = [
                 "command": command.rawValue,
-                "identifier": try identifier.toJSON(),
+                "identifier": try identifier.toJSON(options: .sortedKeys),
                 "data": try data.toJSON()
             ]
             return payload
         case .subscribe, .unsubscribe:
-            var identifier: [String: Any] = identifier
-            identifier["channel"] = channelName
             let payload: [String : Any] = [
                 "command": command.rawValue,
-                "identifier": try identifier.toJSON()
+                "identifier": try identifier.toJSON(options: .sortedKeys)
             ]
             return payload
         }

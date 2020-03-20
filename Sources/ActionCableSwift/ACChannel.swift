@@ -19,7 +19,7 @@ public class ACChannel {
     weak var client: ACClient?
     public var isSubscribed = false
     public var bufferingIfDisconnected = false
-    public var subscriptionParams: [String: Any]
+    public var identifier: [String: Any]
 
     private let channelSerialQueue = DispatchQueue(label: "com.ACChannel.SerialQueue")
 
@@ -57,34 +57,35 @@ public class ACChannel {
 
     public init(channelName: String,
                 client: ACClient,
-                subscriptionParams: [String: Any] = [:],
+                identifier: [String: Any] = [:],
                 options: ACChannelOptions? = nil
     ) {
         self.channelName = channelName
-        self.subscriptionParams = subscriptionParams
+        self.identifier = identifier
+        self.identifier["channel"] = channelName
         self.client = client
         self.options = options ?? ACChannelOptions()
         setupAutoSubscribe()
         setupOnTextCallbacks()
     }
 
-    public func subscribe(params: [String: Any] = [:]) throws {
-        let data: Data = try ACSerializer.requestFrom(command: .subscribe, channelName: channelName, identifier: params)
+    public func subscribe() throws {
+        let data: Data = try ACSerializer.requestFrom(command: .subscribe, identifier: identifier)
         client?.send(data: data)
     }
 
     public func unsubscribe() throws {
-        let data: Data = try ACSerializer.requestFrom(command: .unsubscribe, channelName: channelName)
+        let data: Data = try ACSerializer.requestFrom(command: .unsubscribe, identifier: identifier)
         client?.send(data: data)
     }
 
-    public func sendMessage(actionName: String, params: [String: Any] = [:], _ completion: (() -> Void)? = nil) throws {
+    public func sendMessage(actionName: String, data: [String: Any] = [:], _ completion: (() -> Void)? = nil) throws {
         if isSubscribed {
-            send(actionName: actionName, params: params, completion)
+            send(actionName: actionName, data: data, completion)
         } else if bufferingIfDisconnected {
             addAction { [weak self] in
                 guard let self = self else { return }
-                self.send(actionName: actionName, params: params, completion)
+                self.send(actionName: actionName, data: data, completion)
             }
         }
     }
