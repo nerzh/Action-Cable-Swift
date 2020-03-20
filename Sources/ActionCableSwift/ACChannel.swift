@@ -90,14 +90,14 @@ public class ACChannel {
         }
     }
 
-    private func send(actionName: String, params: [String: Any] = [:], _ completion: (() -> Void)? = nil) {
+    private func send(actionName: String, data: [String: Any] = [:], _ completion: (() -> Void)? = nil) {
         channelSerialQueue.async { [weak self] in
             guard let self = self else { return }
             do {
                 let data: Data = try ACSerializer.requestFrom(command: .message,
-                                                              channelName: self.channelName,
                                                               action: actionName,
-                                                              data: params)
+                                                              identifier: self.identifier,
+                                                              data: data)
                 self.client?.send(data: data) { completion?() }
             } catch {
                 fatalError(error.localizedDescription)
@@ -107,10 +107,10 @@ public class ACChannel {
 
     private func setupAutoSubscribe() {
         if options.autoSubscribe {
-            if client?.isConnected ?? false { try? subscribe(params: subscriptionParams) }
+            if client?.isConnected ?? false { try? subscribe() }
             client?.addOnConnected { [weak self] (headers) in
                 guard let self = self else { return }
-                try? self.subscribe(params: self.subscriptionParams)
+                try? self.subscribe()
             }
         }
     }

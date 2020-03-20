@@ -13,7 +13,7 @@ public class ACSerializer {
     public class func requestFrom(command: ACCommand,
                                   action: String? = nil,
                                   identifier: [String: Any],
-                                  data: [String: Any]
+                                  data: [String: Any] = [:]
     ) throws -> String {
         try makeRequestDictionary(command: command,
                                   action: action,
@@ -25,7 +25,7 @@ public class ACSerializer {
     public class func requestFrom(command: ACCommand,
                                   action: String? = nil,
                                   identifier: [String: Any],
-                                  data: [String: Any]
+                                  data: [String: Any] = [:]
     ) throws -> Data {
         try makeRequestDictionary(command: command,
                                   action: action,
