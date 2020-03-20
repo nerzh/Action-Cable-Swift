@@ -28,7 +28,7 @@ Pod::Spec.new do |s|
   s.author           = { 'Oleh Hudeichuk' => 'emptystamp@gmail.com' }
   s.source           = { :git => 'https://github.com/nerzh/Action-Cable-Swift.git', :tag => s.version.to_s }
   s.social_media_url = 'https://www.linkedin.com/in/oleh-gudeychuk-428389ab'
-  s.ios.deployment_target = '10.0'
+  s.ios.deployment_target = '11.0'
   s.source_files = 'Sources/**/*'
   s.frameworks = 'Foundation'
   s.dependency 'SwiftExtensionsPack', '~> 0.2.9'
