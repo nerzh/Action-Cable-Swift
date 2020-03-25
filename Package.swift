@@ -1,17 +1,19 @@
-// swift-tools-version:5.1
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
+// swift-tools-version:5.2
 import PackageDescription
 
 let package = Package(
     name: "ActionCableSwift",
+    platforms: [
+        .macOS(.v10_13),
+    ],
     products: [
         .library(
             name: "ActionCableSwift",
             targets: ["ActionCableSwift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/nerzh/swift-extensions-pack.git", from: "0.2.6"),
+        .package(name: "SwiftExtensionsPack",
+                 url: "https://github.com/nerzh/swift-extensions-pack.git", from: "0.2.6"),
     ],
     targets: [
         .target(
