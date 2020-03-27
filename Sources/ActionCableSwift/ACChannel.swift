@@ -67,6 +67,8 @@ public class ACChannel {
         self.options = options ?? ACChannelOptions()
         setupAutoSubscribe()
         setupOnTextCallbacks()
+        setupOnCancelledCallbacks()
+        setupOnDisconnectCallbacks()
     }
 
     public func subscribe() throws {
@@ -108,87 +110,77 @@ public class ACChannel {
     private func setupAutoSubscribe() {
         if options.autoSubscribe {
             if client?.isConnected ?? false { try? subscribe() }
-            client?.addOnConnected { [weak self] (headers) in
+            self.client?.addOnConnected { [weak self] (headers) in
                 guard let self = self else { return }
-                try? self.subscribe()
+                self.channelSerialQueue.async {
+                    try? self.subscribe()
+                }
             }
         }
     }
 
     private func setupOnDisconnectCallbacks() {
-        client?.addOnDisconnected { [weak self] (reason) in
+        client?.addOnDisconnected {  [weak self] (reason) in
             guard let self = self else { return }
-            self.isSubscribed = false
+            self.channelSerialQueue.async {
+                self.isSubscribed = false
+                self.executeCallback(callbacks: self.onUnsubscribe)
+            }
         }
     }
 
     private func setupOnCancelledCallbacks() {
         client?.addOnCancelled { [weak self] in
             guard let self = self else { return }
-            self.isSubscribed = false
+            self.channelSerialQueue.async {
+                self.isSubscribed = false
+                self.executeCallback(callbacks: self.onUnsubscribe)
+            }
         }
     }
 
     private func setupOnTextCallbacks() {
         client?.addOnText { [weak self] (text) in
             guard let self = self else { return }
-            let message = ACSerializer.responseFrom(stringData: text)
-            switch message.type {
-            case .confirmSubscription:
-                self.isSubscribed = true
-                self.executeCallback(callbacks: self.onSubscribe, message: message)
-                self.flushBuffer()
-            case .rejectSubscription:
-                self.isSubscribed = false
-                self.executeCallback(callbacks: self.onRejectSubscription, message: message)
-            case .cancelSubscription:
-                self.isSubscribed = false
-                self.executeCallback(callbacks: self.onUnsubscribe, message: message)
-            case .message:
-                self.executeCallback(callbacks: self.onMessage, message: message)
-            case .ping:
-                self.executeCallback(callbacks: self.onPing)
-            default: break
+            self.channelSerialQueue.async {
+                let message = ACSerializer.responseFrom(stringData: text)
+                switch message.type {
+                case .confirmSubscription:
+                    self.isSubscribed = true
+                    self.executeCallback(callbacks: self.onSubscribe, message: message)
+                    self.flushBuffer()
+                case .rejectSubscription:
+                    self.isSubscribed = false
+                    self.executeCallback(callbacks: self.onRejectSubscription, message: message)
+                case .cancelSubscription:
+                    self.isSubscribed = false
+                    self.executeCallback(callbacks: self.onUnsubscribe, message: message)
+                case .message:
+                    self.executeCallback(callbacks: self.onMessage, message: message)
+                case .ping:
+                    self.client?.pingRoundWatcher.ping()
+                    self.executeCallback(callbacks: self.onPing)
+                default: break
+                }
             }
-        }
-
-        client?.addOnDisconnected { [weak self] (reason) in
-            guard let self = self else { return }
-            self.isSubscribed = false
-            self.executeCallback(callbacks: self.onUnsubscribe)
-        }
-
-        client?.addOnCancelled { [weak self] in
-            guard let self = self else { return }
-            self.isSubscribed = false
-            self.executeCallback(callbacks: self.onUnsubscribe)
         }
     }
 
     private func executeCallback(callbacks: [ACResponseCallback], message: ACMessage) {
-        channelSerialQueue.async { [weak self] in
-            guard let self = self else { return }
-            for closure in callbacks {
-                closure(self, message)
-            }
+        for closure in callbacks {
+            closure(self, message)
         }
     }
 
     private func executeCallback(callbacks: [ACResponseCallbackWithOptionalMessage]) {
-        channelSerialQueue.async { [weak self] in
-            guard let self = self else { return }
-            for closure in callbacks {
-                closure(self, nil)
-            }
+        for closure in callbacks {
+            closure(self, nil)
         }
     }
 
     private func flushBuffer() {
-        channelSerialQueue.async { [weak self] in
-            guard let self = self else { return }
-            while let closure = self.actionsBuffer.popLast() {
-                closure()
-            }
+        while let closure = self.actionsBuffer.popLast() {
+            closure()
         }
     }
 }

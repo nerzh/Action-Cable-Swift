@@ -19,7 +19,7 @@ let package = Package(
         .target(
             name: "ActionCableSwift",
             dependencies: [
-                "SwiftExtensionsPack"
+                .product(name: "SwiftExtensionsPack", package: "SwiftExtensionsPack")
             ]),
         .testTarget(
             name: "ActionCableSwiftTests",

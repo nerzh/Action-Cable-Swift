@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
   s.name          = 'ActionCableSwift'
   s.module_name   = 'ActionCableSwift'
-  s.version       = '0.2.1'
+  s.version       = '0.3.0'
   s.summary       = '🏰 Action Cable Swift is a client library being released for Action Cable Rails 5 which makes it easy to add real-time features to your app.'
 
   s.swift_version = '5.1'
