@@ -41,7 +41,9 @@ and you can import ActionCableSwift
 
 ### Your WebSocketService should to implement the `ACWebSocketProtocol` protocol.
 
-#### I highly recommend not using Starscream to implement a WebSocket, because they have a strange implementation that does not allow conveniently reconnecting to a remote server after disconnecting. There is also a cool and fast alternative from the [Swift Server Work Group (SSWG)](https://swift.org/server/) named [Websocket-kit](https://github.com/vapor/websocket-kit). Websocket-kit based on Apple Framework - [Swift-NIO](https://github.com/apple/swift-nio)  
+#### I highly recommend not using Starscream to implement a WebSocket, because they have a strange implementation that does not allow conveniently reconnecting to a remote server after disconnecting. There is also a cool and fast alternative from the [Swift Server Work Group (SSWG)](https://swift.org/server/), package named [Websocket-kit](https://github.com/vapor/websocket-kit). 
+
+[Websocket-kit](https://github.com/vapor/websocket-kit) based on Apple Framework - [Swift-NIO](https://github.com/apple/swift-nio)  
 
 <details>
   <summary>Recommended implementation WSS based on Websocket-kit(Swift-NIO)</summary>
@@ -342,7 +344,11 @@ client.headers = [
 
 ## Requirements
 
-Any Web Socket Library, e.g. [Starscream](https://github.com/daltoniam/Starscream)
+Any Web Socket Library, e.g. 
+
+[Websocket-kit](https://github.com/vapor/websocket-kit)
+
+[Starscream](https://github.com/daltoniam/Starscream)
 
 ## Author
 
