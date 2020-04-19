@@ -193,6 +193,7 @@ final class WSS: ACWebSocketProtocol {
   ```  
 </details>
 
+OR
 
 <details>
   <summary>If you still want to use "Starscream", then you can to copy this code for websocket client</summary>
