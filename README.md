@@ -43,14 +43,17 @@ and you can import ActionCableSwift
 
 #### I highly recommend not using Starscream to implement a WebSocket, because they have a strange implementation that does not allow conveniently reconnecting to a remote server after disconnecting. There is also a cool and fast alternative from the [Swift Server Work Group (SSWG)](https://swift.org/server/), package named [Websocket-kit](https://github.com/vapor/websocket-kit). 
 
-[Websocket-kit](https://github.com/vapor/websocket-kit) based on Apple Framework - [Swift-NIO](https://github.com/apple/swift-nio)  
+[Websocket-kit](https://github.com/vapor/websocket-kit) is SPM(Swift Package Manager) client library built on [Swift-NIO](https://github.com/apple/swift-nio)  
 
 <details>
   <summary>Recommended implementation WSS based on Websocket-kit(Swift-NIO)</summary>
   
-  this is propertyWrapper for threadsafe access to webSocket instance  
+  
+  This is propertyWrapper for threadsafe access to webSocket instance  
   
   ```swift
+  import Foundation
+  
   @propertyWrapper
   struct Atomic<Value> {
   
@@ -80,6 +83,8 @@ and you can import ActionCableSwift
   }
 
   ```
+
+This is implementation WSS
   
   ```swift
 import NIO
