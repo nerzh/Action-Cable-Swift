@@ -307,7 +307,7 @@ client.connect()
 ### Manual Subscribe to a Channel with Params
 
 ```swift
-client.addOnConnected { (h) in
+client.addOnConnected { (headers) in
     /// without params
     try? channel.subscribe()
     
@@ -336,7 +336,7 @@ func addOnPing(_ handler: @escaping (_ channel: ACChannel, _ message: ACMessage?
 ```swift
 // Send an action
 channel.addOnSubscribe { (channel, optionalMessage) in
-    try? ch.sendMessage(actionName: "speak", params: ["test": 10101010101])
+    try? channel.sendMessage(actionName: "speak", params: ["test": 10101010101])
 }
 ```
 
