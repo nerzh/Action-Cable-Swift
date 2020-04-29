@@ -18,9 +18,13 @@ Add the following line to your `Package.swift`
 
 ```swift
     // ...
-    .package(url: "https://github.com/nerzh/Action-Cable-Swift.git", from: "0.1.0")
-    // ...
-    dependencies: ["ActionCableSwift"]
+    .package(name: "ActionCableSwift", url: "https://github.com/nerzh/Action-Cable-Swift.git", from: "0.3.0"),
+    targets: [
+        .target(
+            name: "YourPackageName",
+            dependencies: [
+                .product(name: "ActionCableSwift", package: "ActionCableSwift")
+            ])
     // ...
 ```
 
@@ -44,7 +48,21 @@ and you can import ActionCableSwift
 #### I highly recommend not using Starscream to implement a WebSocket, because they have a strange implementation that does not allow conveniently reconnecting to a remote server after disconnecting. There is also a cool and fast alternative from the [Swift Server Work Group (SSWG)](https://swift.org/server/), package named [Websocket-kit](https://github.com/vapor/websocket-kit). 
 
 [Websocket-kit](https://github.com/vapor/websocket-kit) is SPM(Swift Package Manager) client library built on [Swift-NIO](https://github.com/apple/swift-nio)  
-
+```swift
+    // ...
+    dependencies: [
+        .package(name: "ActionCableSwift", url: "https://github.com/nerzh/Action-Cable-Swift.git", from: "0.3.0"),
+        .package(name: "websocket-kit", url: "https://github.com/vapor/websocket-kit.git", .upToNextMinor(from: "2.0.0"))
+    ],
+    targets: [
+        .target(
+            name: "YourPackageName",
+            dependencies: [
+                .product(name: "ActionCableSwift", package: "ActionCableSwift"),
+                .product(name: "WebSocketKit", package: "websocket-kit")
+            ])
+    // ...
+```
 <details>
   <summary>SPOILER: Recommended implementation WSS based on Websocket-kit(Swift-NIO)</summary>
   
@@ -193,8 +211,11 @@ final class WSS: ACWebSocketProtocol {
   ```  
 </details>
 
-OR
+OR use Starscream
 
+```ruby
+    pod 'Starscream', '~> 4.0.0'
+```
 <details>
   <summary>SPOILER: If you still want to use "Starscream", then you can to copy this code for websocket client</summary>
 
