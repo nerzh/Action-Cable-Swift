@@ -43,7 +43,11 @@ and you can import ActionCableSwift
 ```
 # Usage
 
+---
+
 ## Your WebSocketService should to implement the `ACWebSocketProtocol` protocol.
+
+---
 
 ### Use with [Websocket-kit](https://github.com/vapor/websocket-kit) 
 
@@ -213,6 +217,8 @@ final class WSS: ACWebSocketProtocol {
   ```  
 </details>
 
+---
+
 ### Use with [Starscream](https://github.com/daltoniam/Starscream)
 
 ```ruby
@@ -293,6 +299,8 @@ class WSS: ACWebSocketProtocol, WebSocketDelegate {
 ```
 </details>
 
+---
+
 ### Next step to use ActionCableSwift
 
 
@@ -327,6 +335,8 @@ channel.addOnPing { (channel, optionalMessage) in
 client.connect()
 ```
 
+---
+
 ### Manual Subscribe to a Channel with Params
 
 ```swift
@@ -338,6 +348,8 @@ client.addOnConnected { (headers) in
     try? channel.subscribe(params: ["Key": "Value"])
 }
 ```
+
+---
 
 ### Channel Callbacks
 
@@ -354,6 +366,8 @@ func addOnRejectSubscription(_ handler: @escaping (_ channel: ACChannel, _ messa
 func addOnPing(_ handler: @escaping (_ channel: ACChannel, _ message: ACMessage?) -> Void)
 ```
 
+---
+
 ### Perform an Action on a Channel
 
 ```swift
@@ -363,6 +377,8 @@ channel.addOnSubscribe { (channel, optionalMessage) in
 }
 ```
 
+---
+
 ### Authorization & Headers
 
 ```swift
@@ -370,6 +386,8 @@ client.headers = [
     "Authorization": "sometoken"
 ]
 ```
+
+---
 
 ## Requirements
 
