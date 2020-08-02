@@ -5,6 +5,7 @@ let package = Package(
     name: "ActionCableSwift",
     platforms: [
         .macOS(.v10_13),
+        .iOS(.v11)
     ],
     products: [
         .library(
