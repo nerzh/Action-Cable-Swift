@@ -314,12 +314,20 @@ let ws = WSS(stringURL: "ws://localhost:3334/cable")
 var client = ACClient(ws: ws)
 
 /// pass headers to connect
+/// on server you can get this with env['HTTP_COOKIE']
 client.headers = ["COOKIE": "Value"]
 
 /// make channel
 /// buffering - buffering messages if disconnect and flush after reconnect
 var options = ACChannelOptions(buffering: true, autoSubscribe: true)
-let channel = client.makeChannel(name: "RoomChannel", options: options)
+
+/// params to subscribe passed inside the identifier dictionary
+let identifier: [String: Any] = ["key": "value"] 
+let channel = client.makeChannel(name: "RoomChannel", identifier: identifier, options: options)
+
+
+
+// !!! Make sure that the client and channel objects is declared "globally" and lives while your socket connection is needed
 
 channel.addOnSubscribe { (channel, optionalMessage) in
     print(optionalMessage)
@@ -341,11 +349,7 @@ client.connect()
 
 ```swift
 client.addOnConnected { (headers) in
-    /// without params
     try? channel.subscribe()
-    
-    /// with params
-    try? channel.subscribe(params: ["Key": "Value"])
 }
 ```
 
