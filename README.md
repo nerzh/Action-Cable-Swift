@@ -308,24 +308,21 @@ class WSS: ACWebSocketProtocol, WebSocketDelegate {
 import ActionCableSwift
 
 /// web socket client
-let ws = WSS(stringURL: "ws://localhost:3334/cable")
+let ws: WSS = .init(stringURL: "ws://localhost:3001/cable")
 
 /// action cable client
-var client = ACClient(ws: ws)
-
+let clientOptions: ACClientOptions = .init(debug: false, reconnect: true)
+let client: ACClient = .init(ws: ws, options: clientOptions)
 /// pass headers to connect
 /// on server you can get this with env['HTTP_COOKIE']
 client.headers = ["COOKIE": "Value"]
 
 /// make channel
 /// buffering - buffering messages if disconnect and flush after reconnect
-var options = ACChannelOptions(buffering: true, autoSubscribe: true)
-
+let channelOptions: ACChannelOptions = .init(buffering: true, autoSubscribe: true)
 /// params to subscribe passed inside the identifier dictionary
 let identifier: [String: Any] = ["key": "value"] 
-let channel = client.makeChannel(name: "RoomChannel", identifier: identifier, options: options)
-
-
+let channel: ACChannel = client.makeChannel(name: "RoomChannel", identifier: identifier, options: channelOptions)
 
 // !!! Make sure that the client and channel objects is declared "globally" and lives while your socket connection is needed
 
