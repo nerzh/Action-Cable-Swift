@@ -345,7 +345,7 @@ client.connect()
 
 ---
 
-### Manual Subscribe to a Channel with Params
+### Manual Subscribe to a Channel
 
 ```swift
 client.addOnConnected { (headers) in
