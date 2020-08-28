@@ -71,36 +71,62 @@ public class ACChannel {
         setupOnDisconnectCallbacks()
     }
 
-    public func subscribe() throws {
-        let data: Data = try ACSerializer.requestFrom(command: .subscribe, identifier: identifier)
-        client?.send(data: data)
+    public func subscribe(sendAsData: Bool = false) throws {
+        if sendAsData {
+            let data: Data = try ACSerializer.requestFrom(command: .subscribe, identifier: identifier)
+            client?.send(data: data)
+        } else {
+            let text: String = try ACSerializer.requestFrom(command: .subscribe, identifier: identifier)
+            client?.send(text: text)
+        }
     }
 
-    public func unsubscribe() throws {
-        let data: Data = try ACSerializer.requestFrom(command: .unsubscribe, identifier: identifier)
-        client?.send(data: data)
+    public func unsubscribe(sendAsData: Bool = false) throws {
+        if sendAsData {
+            let data: Data = try ACSerializer.requestFrom(command: .unsubscribe, identifier: identifier)
+            client?.send(data: data)
+        } else {
+            let text: String = try ACSerializer.requestFrom(command: .unsubscribe, identifier: identifier)
+            client?.send(text: text)
+        }
     }
 
-    public func sendMessage(actionName: String, data: [String: Any] = [:], _ completion: (() -> Void)? = nil) throws {
+    public func sendMessage(actionName: String,
+                            data: [String: Any] = [:],
+                            sendAsData: Bool = false,
+                            _ completion: (() -> Void)? = nil
+    ) throws {
         if isSubscribed {
-            send(actionName: actionName, data: data, completion)
+            send(actionName: actionName, data: data, sendAsData: sendAsData, completion)
         } else if bufferingIfDisconnected {
             addAction { [weak self] in
                 guard let self = self else { return }
-                self.send(actionName: actionName, data: data, completion)
+                self.send(actionName: actionName, data: data, sendAsData: sendAsData, completion)
             }
         }
     }
 
-    private func send(actionName: String, data: [String: Any] = [:], _ completion: (() -> Void)? = nil) {
+    private func send(actionName: String,
+                      data: [String: Any] = [:],
+                      sendAsData: Bool = false,
+                      _ completion: (() -> Void)? = nil
+    ) {
         channelSerialQueue.async { [weak self] in
             guard let self = self else { return }
             do {
-                let data: Data = try ACSerializer.requestFrom(command: .message,
-                                                              action: actionName,
-                                                              identifier: self.identifier,
-                                                              data: data)
-                self.client?.send(data: data) { completion?() }
+                if sendAsData {
+                    let data: Data = try ACSerializer.requestFrom(command: .message,
+                                                                  action: actionName,
+                                                                  identifier: self.identifier,
+                                                                  data: data)
+                    self.client?.send(data: data) { completion?() }
+                } else {
+                    let text: String = try ACSerializer.requestFrom(command: .message,
+                                                                    action: actionName,
+                                                                    identifier: self.identifier,
+                                                                    data: data)
+                    self.client?.send(text: text) { completion?() }
+                }
             } catch {
                 fatalError(error.localizedDescription)
             }
