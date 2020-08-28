@@ -18,7 +18,7 @@ Add the following line to your `Package.swift`
 
 ```swift
     // ...
-    .package(name: "ActionCableSwift", url: "https://github.com/nerzh/Action-Cable-Swift.git", from: "0.3.0"),
+    .package(name: "ActionCableSwift", url: "https://github.com/nerzh/Action-Cable-Swift.git", from: "0.3.2"),
     targets: [
         .target(
             name: "YourPackageName",
@@ -53,7 +53,9 @@ and you can import ActionCableSwift
 
 #### I highly recommend not using Starscream to implement a WebSocket, because they have a strange implementation that does not allow conveniently reconnecting to a remote server after disconnecting. There is also a cool and fast alternative from the [Swift Server Work Group (SSWG)](https://swift.org/server/), package named [Websocket-kit](https://github.com/vapor/websocket-kit). 
 
-[Websocket-kit](https://github.com/vapor/websocket-kit) is SPM(Swift Package Manager) client library built on [Swift-NIO](https://github.com/apple/swift-nio)  
+[Websocket-kit](https://github.com/vapor/websocket-kit) is SPM(Swift Package Manager) client library built on [Swift-NIO](https://github.com/apple/swift-nio)
+
+Package.swift
 ```swift
     // ...
     dependencies: [
@@ -69,6 +71,14 @@ and you can import ActionCableSwift
             ])
     // ...
 ```
+
+
+or inside xcode 
+
+
+<img width="733" alt="Снимок экрана 2020-08-28 в 14 05 21" src="https://user-images.githubusercontent.com/10519803/91554329-975aba00-e937-11ea-9a98-eaff35191197.png">
+
+
 <details>
   <summary>SPOILER: Recommended implementation WSS based on Websocket-kit(Swift-NIO)</summary>
   
