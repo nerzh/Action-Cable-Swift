@@ -1,5 +1,7 @@
 ![ActionCableSwift](https://user-images.githubusercontent.com/10519803/79700910-89b66900-82a1-11ea-9374-cf4433d69ed6.png)
 
+Support Action Cable Swift development by giving a ⭐️
+
 # Action Cable Swift  [![Tweet](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/intent/tweet?text=Swift%20Rails%20Action%20Cable%20Client&url=https://github.com/nerzh/Action-Cable-Swift&via=emptystamp&hashtags=swift,actioncable,client,rails,developers)
 [![SPM](https://img.shields.io/badge/swift-package%20manager-green)](https://swift.org/package-manager/)
 [![Action Cable Swift Cocoa Pods](https://img.shields.io/badge/cocoa-pods-orange)](https://cocoapods.org/pods/ActionCableSwift)
