@@ -170,6 +170,7 @@ public class ACChannel {
             guard let self = self else { return }
             self.channelSerialQueue.async {
                 let message = ACSerializer.responseFrom(stringData: text)
+                guard message.channelName == self.channelName else { return }
                 switch message.type {
                 case .confirmSubscription:
                     self.isSubscribed = true
