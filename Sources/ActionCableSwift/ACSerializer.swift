@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftExtensionsPack
 
 public class ACSerializer {
 
@@ -51,7 +50,7 @@ public class ACSerializer {
         case .message, .unrecognized:
             var message = ACMessage(type: messageType)
             if let identifier = dict["identifier"] as? String {
-                message.identifier = try? identifier.toDictionary()
+                message.identifier = identifier.toDictionary()
             }
             message.message = dict["message"] as? [String: Any]
             return message

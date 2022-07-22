@@ -14,7 +14,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "SwiftExtensionsPack",
-                 url: "https://github.com/nerzh/swift-extensions-pack.git", from: "0.2.6"),
+                 url: "https://github.com/nerzh/swift-extensions-pack.git", .upToNextMajor(from: "0.5.0")),
     ],
     targets: [
         .target(
