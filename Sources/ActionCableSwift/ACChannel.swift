@@ -170,21 +170,21 @@ public class ACChannel {
             guard let self = self else { return }
             self.channelSerialQueue.async {
                 let message = ACSerializer.responseFrom(stringData: text)
-                guard message.channelName == self.channelName else { return }
-                switch message.type {
-                case .confirmSubscription:
+                let sameChannelName = message.channelName == self.channelName
+                switch (message.type, sameChannelName) {
+                case (.confirmSubscription, true):
                     self.isSubscribed = true
                     self.executeCallback(callbacks: self.onSubscribe, message: message)
                     self.flushBuffer()
-                case .rejectSubscription:
+                case (.rejectSubscription, true):
                     self.isSubscribed = false
                     self.executeCallback(callbacks: self.onRejectSubscription, message: message)
-                case .cancelSubscription:
+                case (.cancelSubscription, true):
                     self.isSubscribed = false
                     self.executeCallback(callbacks: self.onUnsubscribe, message: message)
-                case .message:
+                case (.message, true):
                     self.executeCallback(callbacks: self.onMessage, message: message)
-                case .ping:
+                case (.ping, _):
                     self.client?.pingRoundWatcher.ping()
                     self.executeCallback(callbacks: self.onPing)
                 default: break
