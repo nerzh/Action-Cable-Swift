@@ -71,7 +71,7 @@ public class ACChannel {
         setupOnDisconnectCallbacks()
     }
 
-    public func subscribe(sendAsData: Bool = false) throws {
+  public func subscribe(sendAsData: Bool = false, encodeIdentifier: Bool = false, encodeData: Bool = false) throws {
         if sendAsData {
             let data: Data = try ACSerializer.requestFrom(command: .subscribe, identifier: identifier)
             client?.send(data: data)

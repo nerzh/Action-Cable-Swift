@@ -12,13 +12,29 @@ public class ACSerializer {
     public class func requestFrom(command: ACCommand,
                                   action: String? = nil,
                                   identifier: [String: Any],
-                                  data: [String: Any] = [:]
+                                  data: [String: Any] = [:],
+                                  encodeIdentifier: Bool = false,
+                                  encodeData: Bool = false
     ) throws -> String {
-        try makeRequestDictionary(command: command,
+      if #available(iOS 13.0, macOS 10.15, *) {
+        let result = try makeRequestDictionary(command: command,
                                   action: action,
                                   identifier: identifier,
-                                  data: data
-        ).toJSON()
+                                  data: data,
+                                  encodeIdentifier: encodeIdentifier,
+                                  encodeData: encodeData
+        ).toJSON(options: [.withoutEscapingSlashes, .fragmentsAllowed, .sortedKeys])
+        return result
+      } else {
+        let result = try makeRequestDictionary(command: command,
+                                  action: action,
+                                  identifier: identifier,
+                                  data: data,
+                                  encodeIdentifier: encodeIdentifier,
+                                  encodeData: encodeData)
+          .toJSON() // TODO: fallback to previous
+        return result
+      }
     }
 
     public class func requestFrom(command: ACCommand,
@@ -29,7 +45,9 @@ public class ACSerializer {
         try makeRequestDictionary(command: command,
                                   action: action,
                                   identifier: identifier,
-                                  data: data
+                                  data: data,
+                                  encodeIdentifier: false,
+                                  encodeData: false
         ).toJSONData()
     }
 
@@ -75,28 +93,40 @@ public class ACSerializer {
         return messageType
     }
 
-    private class func makeRequestDictionary(command: ACCommand,
-                                             action: String? = nil,
-                                             identifier: [String: Any],
-                                             data: [String: Any]
-    ) throws -> [String: Any] {
-        switch command {
-        case .message:
-            guard let action = action else { throw ACError.badAction }
-            var data: [String : Any] = data
-            data["action"] = action
-            let payload: [String : Any] = [
-                "command": command.rawValue,
-                "identifier": try identifier.toJSON(options: .sortedKeys),
-                "data": try data.toJSON()
-            ]
-            return payload
-        case .subscribe, .unsubscribe:
-            let payload: [String : Any] = [
-                "command": command.rawValue,
-                "identifier": try identifier.toJSON(options: .sortedKeys)
-            ]
-            return payload
+  private class func makeRequestDictionary(command: ACCommand,
+                                           action: String? = nil,
+                                           identifier: [String: Any],
+                                           data: [String: Any],
+                                           encodeIdentifier: Bool = true,
+                                           encodeData: Bool = false
+  ) throws -> [String: String] {
+    
+      switch command {
+      case .message:
+          guard let action = action else { throw ACError.badAction }
+          var data: [String : Any] = data
+          data["action"] = action
+        var payload: [String : String]
+        if #available(iOS 13.0, macOS 10.15, *) {
+          payload = [
+            "command": command.rawValue,
+            "identifier": try identifier.toJSON(options: .sortedKeys),
+            "data": try data.toJSON(options: [.withoutEscapingSlashes, .fragmentsAllowed, .sortedKeys])
+          ]
+        } else {
+          payload = [
+            "command": command.rawValue,
+            "identifier": try identifier.toJSON(options: .sortedKeys),
+            "data": try data.toJSON(options: [.fragmentsAllowed, .sortedKeys])
+          ]
         }
-    }
+          return payload
+      case .subscribe, .unsubscribe:
+          let payload: [String : String] = [
+              "command": command.rawValue,
+              "identifier": try identifier.toJSON(options: .sortedKeys)
+          ]
+          return payload
+      }
+  }
 }
