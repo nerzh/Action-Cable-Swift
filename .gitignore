@@ -9,3 +9,4 @@ db.sqlite
 .env*
 Keys/*
 !Keys/.gitkeep
+Package.resolved
