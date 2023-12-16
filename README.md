@@ -37,9 +37,6 @@ Add the following line to your `Package.swift`
 ```swift
 import ActionCableSwift
 
-/// web socket client
-let ws: WSS = .init(stringURL: "ws://localhost:3001/cable")
-
 /// action cable client
 let clientOptions: ACClientOptions = .init(debug: false, reconnect: true)
 let client: ACClient = .init(stringURL: "ws://localhost:3001/cable", options: clientOptions)
