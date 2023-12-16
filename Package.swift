@@ -1,11 +1,12 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.8
+
 import PackageDescription
 
 let package = Package(
     name: "ActionCableSwift",
     platforms: [
-        .macOS(.v10_13),
-        .iOS(.v11)
+        .macOS(.v10_15),
+        .iOS(.v13)
     ],
     products: [
         .library(
@@ -13,17 +14,15 @@ let package = Package(
             targets: ["ActionCableSwift"]),
     ],
     dependencies: [
-        .package(name: "SwiftExtensionsPack",
-                 url: "https://github.com/nerzh/swift-extensions-pack.git", .upToNextMajor(from: "0.5.0")),
+        .package(url: "https://github.com/nerzh/swift-extensions-pack.git", .upToNextMajor(from: "1.16.0")),
+        .package(url: "https://github.com/vapor/websocket-kit.git", .upToNextMajor(from: "2.14.0")),
     ],
     targets: [
         .target(
             name: "ActionCableSwift",
             dependencies: [
-                .product(name: "SwiftExtensionsPack", package: "SwiftExtensionsPack")
+                .product(name: "SwiftExtensionsPack", package: "swift-extensions-pack"),
+                .product(name: "WebSocketKit", package: "websocket-kit"),
             ]),
-        .testTarget(
-            name: "ActionCableSwiftTests",
-            dependencies: ["ActionCableSwift"]),
     ]
 )

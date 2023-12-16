@@ -133,7 +133,7 @@ public final class PingRoundWatcher {
         set { _checksDelay = UInt32(newValue * 1_000_000) }
     }
     private var _checksDelay: UInt32 = 500_000
-    private var lastTimePoint: Int64 = 0
+    private var lastTimePoint: UInt = 0
     private var started: Bool = false
     private let lock: NSLock = .init()
     private let startInfoLock: NSLock = .init()

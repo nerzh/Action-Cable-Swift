@@ -36,6 +36,20 @@ public final class ACClient {
             self.pingRoundWatcher.start()
         }
     }
+    
+    public init(stringURL: String,
+                headers: [String: String]? = nil,
+                options: ACClientOptions? = nil
+    ) {
+        self.ws = WSS(stringURL: stringURL)
+        self.headers = headers
+        self.options = options ?? ACClientOptions()
+        setupWSCallbacks()
+        pingRoundWatcher.client = self
+        if self.options.reconnect {
+            self.pingRoundWatcher.start()
+        }
+    }
 
     public func addOnConnected(_ handler: @escaping (_ headers: [String: String]?) -> Void) {
         onConnected.append(handler)
