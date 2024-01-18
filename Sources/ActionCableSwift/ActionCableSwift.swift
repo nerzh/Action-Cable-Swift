@@ -1,5 +1,7 @@
 
 import Foundation
+import WebSocketKit
+import NIOCore
 
 public final class ACClient {
 
@@ -37,11 +39,14 @@ public final class ACClient {
         }
     }
     
+    /// Default websocket implementation 
     public init(stringURL: String,
+                configuration: WebSocketClient.Configuration = .init(),
+                coreCount: Int = System.coreCount,
                 headers: [String: String]? = nil,
                 options: ACClientOptions? = nil
     ) {
-        self.ws = WSS(stringURL: stringURL)
+        self.ws = WSS(stringURL: stringURL, configuration: configuration, coreCount: coreCount)
         self.headers = headers
         self.options = options ?? ACClientOptions()
         setupWSCallbacks()

@@ -18,11 +18,13 @@ open class WSS: ACWebSocketProtocol {
     
     public var url: URL
     private var eventLoopGroup: EventLoopGroup
+    private var configuration: WebSocketClient.Configuration
     var ws: WebSocket?
     
-    init(stringURL: String, coreCount: Int = System.coreCount) {
+    init(stringURL: String, configuration: WebSocketClient.Configuration = .init(), coreCount: Int = System.coreCount) {
         url = URL(string: stringURL)!
         eventLoopGroup = MultiThreadedEventLoopGroup(numberOfThreads: coreCount)
+        self.configuration = configuration
     }
     
     public var onConnected: ((_ headers: [String : String]?) -> Void)?
@@ -43,6 +45,7 @@ open class WSS: ACWebSocketProtocol {
         
         WebSocket.connect(to: url.absoluteString,
                           headers: httpHeaders,
+                          configuration: configuration,
                           on: eventLoopGroup
         ) { ws in
             self.ws = ws
